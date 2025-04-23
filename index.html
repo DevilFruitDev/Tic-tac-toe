@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limited Marks Tic Tac Toe</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .game-info {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .game-rules {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+            background-color: #f9f9f9;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        
+        .oldest-mark-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .oldest-mark-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #FF9800;
+            margin-left: 5px;
+        }
+        
+        .current-player {
+            font-weight: bold;
+        }
+        
+        .player-x {
+            color: #e91e63;
+        }
+        
+        .player-o {
+            color: #2196F3;
+        }
+        
+        .marker-count {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        
+        .player-markers {
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 8px 15px;
+            border-radius: 5px;
+            min-width: 120px;
+        }
+        
+        .x-count {
+            color: #e91e63;
+            font-weight: bold;
+        }
+        
+        .o-count {
+            color: #2196F3;
+            font-weight: bold;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .cell {
+            background-color: #f0f0f0;
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .cell:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.02);
+        }
+        
+        .cell.x {
+            color: #e91e63;
+        }
+        
+        .cell.o {
+            color: #2196F3;
+        }
+        
+        .cell.oldest-mark::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #FF9800;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        .cell.fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+        
+        .cell.win-cell {
+            animation: winPulse 1.5s infinite;
+        }
+        
+        @keyframes winPulse {
+            0% {
+                background-color: #f0f0f0;
+            }
+            50% {
+                background-color: #4CAF50;
+            }
+            100% {
+                background-color: #f0f0f0;
+            }
+        }
+        
+        .result {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+            height: 36px;
+            transition: all 0.3s ease;
+        }
+        
+        .win {
+            color: #4CAF50;
+        }
+        
+        .draw {
+            color: #FF9800;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #new-game-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #new-game-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .stats {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .stats:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-header {
+            margin-bottom: 15px;
+            text-align: center;
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .stats-header::after {
+            content: '▼';
+            font-size: 12px;
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .stats.collapsed .stats-header::after {
+            transform: rotate(-90deg);
+        }
+        
+        .stats-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .stats.collapsed .stats-content {
+            max-height: 0;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stats-label {
+            font-weight: normal;
+            color: #666;
+        }
+        
+        .stats-value {
+            font-weight: bold;
+            border-radius: 3px;
+            padding: 2px 8px;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .x-value {
+            background-color: rgba(233, 30, 99, 0.1);
+            color: #e91e63;
+        }
+        
+        .o-value {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
+        }
+        
+        .draw-value {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+        }
+        
+        .neutral-value {
+            background-color: rgba(158, 158, 158, 0.1);
+            color: #757575;
+        }
+        
+        .progress-section {
+            margin: 20px 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            transition: width 0.8s ease;
+        }
+        
+        .x-progress {
+            background-color: #e91e63;
+        }
+        
+        .o-progress {
+            background-color: #2196F3;
+        }
+        
+        .game-history {
+            margin-top: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 14px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        
+        .history-header {
+            background-color: #f0f0f0;
+            padding: 8px;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-result {
+            font-weight: bold;
+        }
+        
+        .history-time {
+            color: #757575;
+            font-size: 12px;
+        }
+        
+        .x-win {
+            color: #e91e63;
+        }
+        
+        .o-win {
+            color: #2196F3;
+        }
+        
+        .draw-result {
+            color: #FF9800;
+        }
+        
+        .stats-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .clear-stats {
+            background-color: #757575;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .clear-stats:hover {
+            background-color: #616161;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Limited Marks Tic Tac Toe</h1>
+        
+        <div class="game-info">
+            Current Player: <span id="current-player" class="current-player player-x">X</span>
+        </div>
+        
+        <div class="game-rules">
+            Only 3 marks allowed per player. When you place a 4th mark, your oldest mark disappears.
+        </div>
+        
+        <div class="oldest-mark-info">
+            <span>Oldest mark indicator: </span>
+            <span class="oldest-mark-indicator"></span>
+        </div>
+        
+        <div class="marker-count">
+            <div class="player-markers">
+                <p>X Markers: <span id="x-count" class="x-count">0</span>/3</p>
+            </div>
+            <div class="player-markers">
+                <p>O Markers: <span id="o-count" class="o-count">0</span>/3</p>
+            </div>
+        </div>
+        
+        <div id="board" class="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        
+        <div id="result" class="result"></div>
+        
+        <div class="buttons">
+            <button id="new-game-btn">New Game</button>
+        </div>
+        
+        <div id="stats" class="stats">
+            <div class="stats-header">Game Statistics</div>
+            <div class="stats-content">
+                <div class="progress-section">
+                    <div class="progress-label">
+                        <span>X Win Rate</span>
+                        <span id="x-win-rate">0%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div id="x-progress" class="progress-bar x-progress" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="progress-label">
+                        <span>O Win Rate</span>
+                        <span id="o-win-rate">0%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div id="o-progress" class="progress-bar o-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="stats-row">
+                    <span class="stats-label">Games Played</span>
+                    <span id="games-played" class="stats-value neutral-value">0</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">X Wins</span>
+                    <span id="x-wins" class="stats-value x-value">0</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">O Wins</span>
+                    <span id="o-wins" class="stats-value o-value">0</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Draws</span>
+                    <span id="draws" class="stats-value draw-value">0</span>
+                </div>
+                
+                <div class="game-history">
+                    <div class="history-header">Recent Games</div>
+                    <div id="history-list">
+                        <!-- Game history will be added here -->
+                    </div>
+                </div>
+                
+                <div class="stats-buttons">
+                    <button id="clear-stats" class="clear-stats">Clear Statistics</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state variables
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let gameState = ['', '', '', '', '', '', '', '', ''];
+        let xMoves = [];
+        let oMoves = [];
+        let xWins = 0;
+        let oWins = 0;
+        let draws = 0;
+        let gameCount = 0;
+        let gameHistory = [];
+        
+        // DOM Elements
+        const board = document.getElementById('board');
+        const cells = document.querySelectorAll('.cell');
+        const resultDisplay = document.getElementById('result');
+        const currentPlayerDisplay = document.getElementById('current-player');
+        const newGameButton = document.getElementById('new-game-btn');
+        const xWinsElement = document.getElementById('x-wins');
+        const oWinsElement = document.getElementById('o-wins');
+        const drawsElement = document.getElementById('draws');
+        const gamesPlayedElement = document.getElementById('games-played');
+        const xCountElement = document.getElementById('x-count');
+        const oCountElement = document.getElementById('o-count');
+        const xProgressElement = document.getElementById('x-progress');
+        const oProgressElement = document.getElementById('o-progress');
+        const xWinRateElement = document.getElementById('x-win-rate');
+        const oWinRateElement = document.getElementById('o-win-rate');
+        const historyListElement = document.getElementById('history-list');
+        const statsElement = document.getElementById('stats');
+        const statsHeader = document.querySelector('.stats-header');
+        const clearStatsButton = document.getElementById('clear-stats');
+        
+        // Winning combinations
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+        
+        // Add event listeners
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => cellClicked(cell));
+        });
+        
+        newGameButton.addEventListener('click', startNewGame);
+        statsHeader.addEventListener('click', toggleStats);
+        clearStatsButton.addEventListener('click', clearStats);
+        
+        // Handle cell click
+        function cellClicked(cell) {
+            const index = cell.getAttribute('data-index');
+            
+            // If cell is already filled or game is not active, do nothing
+            if (gameState[index] !== '' || !gameActive) {
+                return;
+            }
+            
+            // Update game state
+            gameState[index] = currentPlayer;
+            cell.textContent = currentPlayer;
+            cell.classList.add(currentPlayer.toLowerCase());
+            
+            // Update oldest mark indicators
+            updateOldestMarkIndicators();
+            
+            // Track player moves
+            if (currentPlayer === 'X') {
+                xMoves.push(parseInt(index));
+                if (xMoves.length > 3) {
+                    // Remove the oldest move
+                    const oldestMove = xMoves.shift();
+                    const oldCell = document.querySelector(`.cell[data-index="${oldestMove}"]`);
+                    
+                    // Add fade-out animation
+                    oldCell.classList.add('fade-out');
+                    
+                    // Immediately mark this cell as invalid for win checking
+                    gameState[oldestMove] = 'fading';
+                    
+                    // After animation completes, remove the mark
+                    setTimeout(() => {
+                        gameState[oldestMove] = '';
+                        oldCell.textContent = '';
+                        oldCell.classList.remove('x', 'fade-out', 'oldest-mark');
+                    }, 500);
+                }
+                xCountElement.textContent = xMoves.length;
+            } else {
+                oMoves.push(parseInt(index));
+                if (oMoves.length > 3) {
+                    // Remove the oldest move
+                    const oldestMove = oMoves.shift();
+                    const oldCell = document.querySelector(`.cell[data-index="${oldestMove}"]`);
+                    
+                    // Add fade-out animation
+                    oldCell.classList.add('fade-out');
+                    
+                    // Immediately mark this cell as invalid for win checking
+                    gameState[oldestMove] = 'fading';
+                    
+                    // After animation completes, remove the mark
+                    setTimeout(() => {
+                        gameState[oldestMove] = '';
+                        oldCell.textContent = '';
+                        oldCell.classList.remove('o', 'fade-out', 'oldest-mark');
+                    }, 500);
+                }
+                oCountElement.textContent = oMoves.length;
+            }
+            
+            // Update oldest mark indicators after moves are processed
+            updateOldestMarkIndicators();
+            
+            // Check if there's a winner
+            checkResult();
+        }
+        
+        // Check if there's a winner or draw
+        function checkResult() {
+            let roundWon = false;
+            
+            // Check all winning conditions
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                // Skip if any cell is empty, fading, or different from the others
+                if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '' ||
+                    gameState[a] === 'fading' || gameState[b] === 'fading' || gameState[c] === 'fading') {
+                    continue;
+                }
+                if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+                    roundWon = true;
+                    
+                    // Highlight the winning cells
+                    const winCells = [a, b, c];
+                    winCells.forEach(index => {
+                        document.querySelector(`.cell[data-index="${index}"]`).classList.add('win-cell');
+                    });
+                    
+                    break;
+                }
+            }
+            
+            // If there's a winner
+            if (roundWon) {
+                resultDisplay.textContent = `${currentPlayer} wins!`;
+                resultDisplay.classList.add('win');
+                gameActive = false;
+                
+                // Update stats
+                if (currentPlayer === 'X') {
+                    xWins++;
+                    xWinsElement.textContent = xWins;
+                    addGameToHistory('X Win');
+                } else {
+                    oWins++;
+                    oWinsElement.textContent = oWins;
+                    addGameToHistory('O Win');
+                }
+                
+                gameCount++;
+                gamesPlayedElement.textContent = gameCount;
+                
+                // Update progress bars and win rates
+                updateStats();
+                
+                return;
+            }
+            
+            // Check for draw
+            const isDraw = !gameState.includes('') && !gameState.includes('fading');
+            if (isDraw) {
+                resultDisplay.textContent = "It's a draw!";
+                resultDisplay.classList.add('draw');
+                gameActive = false;
+                
+                // Update stats
+                draws++;
+                drawsElement.textContent = draws;
+                gameCount++;
+                gamesPlayedElement.textContent = gameCount;
+                
+                // Add to game history
+                addGameToHistory('Draw');
+                
+                // Update progress bars and win rates
+                updateStats();
+                
+                return;
+            }
+            
+            // Switch player
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            currentPlayerDisplay.textContent = currentPlayer;
+            currentPlayerDisplay.className = `current-player player-${currentPlayer.toLowerCase()}`;
+        }
+        
+        // Update visual indicators for oldest marks
+        function updateOldestMarkIndicators() {
+            // Clear all oldest mark indicators
+            document.querySelectorAll('.oldest-mark').forEach(cell => {
+                cell.classList.remove('oldest-mark');
+            });
+            
+            // Mark oldest X if there are any X moves
+            if (xMoves.length > 0) {
+                const oldestXIndex = xMoves[0];
+                const oldestXCell = document.querySelector(`.cell[data-index="${oldestXIndex}"]`);
+                if (oldestXCell && !oldestXCell.classList.contains('fade-out')) {
+                    oldestXCell.classList.add('oldest-mark');
+                }
+            }
+            
+            // Mark oldest O if there are any O moves
+            if (oMoves.length > 0) {
+                const oldestOIndex = oMoves[0];
+                const oldestOCell = document.querySelector(`.cell[data-index="${oldestOIndex}"]`);
+                if (oldestOCell && !oldestOCell.classList.contains('fade-out')) {
+                    oldestOCell.classList.add('oldest-mark');
+                }
+            }
+        }
+        
+        // Start a new game
+        function startNewGame() {
+            currentPlayer = 'X';
+            gameActive = true;
+            gameState = ['', '', '', '', '', '', '', '', ''];
+            xMoves = [];
+            oMoves = [];
+            
+            resultDisplay.textContent = '';
+            resultDisplay.classList.remove('win', 'draw');
+            currentPlayerDisplay.textContent = 'X';
+            currentPlayerDisplay.className = 'current-player player-x';
+            
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o', 'win-cell', 'fade-out', 'oldest-mark');
+            });
+            
+            xCountElement.textContent = '0';
+            oCountElement.textContent = '0';
+        }
+        
+        // Function to update all stats displays
+        function updateStats() {
+            if (gameCount > 0) {
+                // Calculate win rates
+                const xWinRate = Math.round((xWins / gameCount) * 100);
+                const oWinRate = Math.round((oWins / gameCount) * 100);
+                
+                // Update win rate displays
+                xWinRateElement.textContent = `${xWinRate}%`;
+                oWinRateElement.textContent = `${oWinRate}%`;
+                
+                // Update progress bars
+                xProgressElement.style.width = `${xWinRate}%`;
+                oProgressElement.style.width = `${oWinRate}%`;
+            }
+        }
+        
+        // Toggle stats panel
+        function toggleStats() {
+            statsElement.classList.toggle('collapsed');
+        }
+        
+        // Add a game to history
+        function addGameToHistory(result) {
+            // Get current time
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Create history entry
+            const historyEntry = {
+                result: result,
+                time: timeString,
+                gameNumber: gameCount + 1
+            };
+            
+            // Add to history array (limit to last 10 games)
+            gameHistory.unshift(historyEntry);
+            if (gameHistory.length > 10) {
+                gameHistory.pop();
+            }
+            
+            // Update history display
+            updateHistoryDisplay();
+        }
+        
+        // Update the history display
+        function updateHistoryDisplay() {
+            historyListElement.innerHTML = '';
+            
+            if (gameHistory.length === 0) {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = 'history-item';
+                emptyItem.textContent = 'No games played yet';
+                historyListElement.appendChild(emptyItem);
+                return;
+            }
+            
+            gameHistory.forEach(game => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const gameInfo = document.createElement('span');
+                gameInfo.textContent = `Game ${game.gameNumber}`;
+                
+                const resultText = document.createElement('span');
+                resultText.className = 'history-result';
+                
+                if (game.result === 'X Win') {
+                    resultText.textContent = 'X Won';
+                    resultText.classList.add('x-win');
+                } else if (game.result === 'O Win') {
+                    resultText.textContent = 'O Won';
+                    resultText.classList.add('o-win');
+                } else {
+                    resultText.textContent = 'Draw';
+                    resultText.classList.add('draw-result');
+                }
+                
+                const timeInfo = document.createElement('span');
+                timeInfo.className = 'history-time';
+                timeInfo.textContent = game.time;
+                
+                historyItem.appendChild(gameInfo);
+                historyItem.appendChild(resultText);
+                historyItem.appendChild(timeInfo);
+                
+                historyListElement.appendChild(historyItem);
+            });
+        }
+        
+        // Function to clear all stats
+        function clearStats() {
+            // Reset all stat values
+            xWins = 0;
+            oWins = 0;
+            draws = 0;
+            gameCount = 0;
+            gameHistory = [];
+            
+            // Update displays
+            xWinsElement.textContent = '0';
+            oWinsElement.textContent = '0';
+            drawsElement.textContent = '0';
+            gamesPlayedElement.textContent = '0';
+            xWinRateElement.textContent = '0%';
+            oWinRateElement.textContent = '0%';
+            xProgressElement.style.width = '0%';
+            oProgressElement.style.width = '0%';
+            
+            // Update history display
+            updateHistoryDisplay();
+            
+            // Provide visual feedback
+            clearStatsButton.textContent = 'Statistics Cleared!';
+            setTimeout(() => {
+                clearStatsButton.textContent = 'Clear Statistics';
+            }, 1500);
+        }
+        
+        // Initialize game
+        updateHistoryDisplay();
+    </script>
+</body>
+</html>
