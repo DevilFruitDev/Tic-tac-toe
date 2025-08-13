@@ -143,7 +143,7 @@ This is a complete game, but improvements are welcome:
 
 Built with vanilla JS to prove simple games don't need complex tools.
 
-MIT © [Your Name]
+MIT © [DevilFruitDev]
 
 ---
 
