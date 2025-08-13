@@ -1,107 +1,154 @@
-# JavaScript Games Collection
+# 🎯 Limited Marks Tic Tac Toe
 
-A collection of interactive browser games built with vanilla HTML, CSS, and JavaScript. No frameworks, no dependencies - just pure web fundamentals.
+A strategic twist on classic Tic Tac Toe where players can only have 3 marks on the board at once. When placing a 4th mark, your oldest mark disappears - turning a solved game into an evolving puzzle.
 
-## 🎮 Games Included
+[![Play Now](https://img.shields.io/badge/Play-Live_Demo-brightgreen)](https://yourusername.github.io/limited-tictactoe/)
+![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-No_Dependencies-yellow)
+![Size](https://img.shields.io/badge/Size-<20KB-green)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-### 1. Dice Game
-A simple dice rolling game where you compete against an opponent to get the higher roll.
+## The Twist 🔄
 
-**Features:**
-- Random dice rolling with visual dice faces
-- Win/loss/tie tracking
-- Game statistics and win rate calculation
-- Responsive design
+Traditional Tic Tac Toe is a solved game - perfect play always leads to a draw. **This version breaks that.**
 
-![Dice Game Screenshot](screenshots/dice-game.png)
+- **3 Mark Limit** - Each player can only have 3 marks on the board
+- **Auto-Removal** - Your 4th move removes your oldest mark
+- **Visual Indicators** - Orange dots show which marks will disappear next
+- **Dynamic Strategy** - Winning positions can suddenly become vulnerable
 
-### 2. Limited Marks Tic Tac Toe
-A strategic twist on the classic Tic Tac Toe game where each player can only have 3 marks on the board at a time.
+## Features ✨
 
-**Features:**
-- Limited to 3 marks per player - when you place a 4th mark, your oldest mark disappears
-- Visual indicator showing which mark will disappear next
-- Smooth animations for disappearing marks
-- Winning line animation
-- Detailed game statistics panel with:
-  - Win rate tracking with visual progress bars
-  - Game history with timestamps
-  - Stats that persist during your session
-- Responsive design for all devices
+### Gameplay
+- **Limited Marks System** - Core mechanic that changes everything
+- **Smooth Animations** - Fade effects when marks disappear
+- **Win Detection** - Instant highlighting of winning combinations
+- **Visual Feedback** - Clear indicators for current player and oldest marks
 
-![Tic Tac Toe Screenshot](screenshots/tic-tac-toe.png)
+### Statistics Tracking
+- **Win Rates** - Live progress bars for each player
+- **Game History** - Last 10 games with timestamps
+- **Session Stats** - Total games, wins, draws
+- **Clear Function** - Reset stats without losing current game
 
-## 🚀 Getting Started
+### UI/UX
+- **Clean Design** - Minimalist interface that stays out of the way
+- **Responsive Layout** - Works on all screen sizes
+- **Collapsible Stats** - Click to show/hide statistics panel
+- **Color Coding** - Pink for X, Blue for O, Orange for warnings
+
+## Quick Start 🚀
 
 ### Play Online
-You can play the games directly on GitHub Pages: [Play Games](https://yourusername.github.io/js-games/)
+Simply open `index.html` in any modern browser. No installation, no dependencies.
 
-### Run Locally
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/js-games.git
-   ```
+### Deploy Your Own
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/limited-tictactoe.git
 
-2. Open any of the HTML files in your browser:
-   ```bash
-   cd js-games
-   # Open dice-game.html or limited-tic-tac-toe.html in your browser
-   ```
+# Open in browser
+open index.html
 
-## 💻 Implementation Details
-
-These games are built with:
-- **HTML5** - For structure and content
-- **CSS3** - For styling and animations
-- **JavaScript** - For game logic and interactivity
-
-No external libraries or frameworks are used, making this project excellent for learning web development fundamentals.
-
-### Key JavaScript Concepts Demonstrated
-- DOM manipulation
-- Event handling
-- Game state management
-- Animations and transitions
-- Randomization
-- Win condition checking
-- Statistics tracking
-
-## 🛠️ Development
-
-### Project Structure
-```
-js-games/
-├── dice-game.html           # Dice rolling game
-├── limited-tic-tac-toe.html # Limited marks tic-tac-toe game
-├── screenshots/             # Screenshots for documentation
-│   ├── dice-game.png
-│   └── tic-tac-toe.png
-└── README.md                # This file
+# Or serve locally
+python3 -m http.server 8000
 ```
 
-### Future Enhancements
-- [ ] Add sound effects
-- [ ] Implement local storage to persist game statistics between sessions
-- [ ] Add AI opponents with adjustable difficulty
-- [ ] Create mobile-optimized touch controls
-- [ ] Add more games to the collection
+### GitHub Pages
+1. Push to GitHub
+2. Settings → Pages → Deploy from main
+3. Share your game link!
 
-## 📝 License
+## How It Works 🧠
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Core Algorithm
+```javascript
+// Track each player's moves in order
+let xMoves = []; // [oldest, ..., newest]
+let oMoves = [];
 
-## 🤝 Contributing
+// When a player makes their 4th move
+if (xMoves.length > 3) {
+    const oldestMove = xMoves.shift(); // Remove oldest
+    clearCell(oldestMove);             // Clear from board
+}
+```
 
-Contributions are welcome! If you'd like to add features, fix bugs, or improve the games:
+### The Strategy Layer
+Unlike classic Tic Tac Toe, this version requires:
+- **Defensive Planning** - Your winning move might disappear
+- **Offensive Timing** - Strike when opponent's key piece is about to vanish
+- **Board Reading** - Track both current positions AND move order
+- **Adaptation** - Strategies must evolve as marks cycle
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## Technical Details 📊
 
-## 📬 Contact
+### Architecture
+- **Single File** - Everything in one HTML file
+- **Pure CSS Animations** - No animation libraries
+- **Vanilla JavaScript** - No frameworks needed
+- **Local State** - No backend required
 
-Your Name - [@yourusername](https://twitter.com/yourusername) - email@example.com
+### Performance
+- **Size**: < 20KB total
+- **Load Time**: Instant
+- **Dependencies**: Zero
+- **Browser Support**: All modern browsers
 
-Project Link: [https://github.com/yourusername/js-games](https://github.com/yourusername/js-games)
+### Code Structure
+```
+index.html
+├── Styles (Internal CSS)
+│   ├── Layout & Typography
+│   ├── Game Board Styling
+│   ├── Animation Keyframes
+│   └── Statistics Panel
+└── Script (Vanilla JS)
+    ├── Game State Management
+    ├── Move Validation
+    ├── Win Detection
+    ├── Statistics Tracking
+    └── UI Updates
+```
+
+## Why This Exists 🤔
+
+Classic Tic Tac Toe has a fundamental flaw: it's solved. Perfect play always results in a draw. This variant introduces **managed chaos** - your perfect strategy can crumble when that crucial center square you placed three moves ago suddenly vanishes.
+
+The result? A game that's:
+- **Always Winnable** - No guaranteed draws
+- **Never Repetitive** - Board states constantly evolve
+- **Strategically Deep** - Multiple layers of planning required
+- **Actually Fun** - Even for adults who've outgrown classic version
+
+## Contributing 🤝
+
+This is a complete game, but improvements are welcome:
+
+### Potential Enhancements
+- [ ] AI opponent with difficulty levels
+- [ ] Online multiplayer
+- [ ] Tournament mode
+- [ ] Custom board sizes (4x4, 5x5)
+- [ ] Time limits per move
+- [ ] Sound effects
+- [ ] Dark mode
+
+### Code Style
+- Keep it vanilla (no frameworks)
+- Maintain single-file simplicity
+- Comment complex logic
+- Test on mobile devices
+
+## Credits & License
+
+Built with vanilla JS to prove simple games don't need complex tools.
+
+MIT © [Your Name]
+
+---
+
+<p align="center">
+  <strong>When three marks aren't enough, but four is too many</strong>
+  <br>
+  <em>Sometimes the best games come from simple rule changes</em>
+</p>
